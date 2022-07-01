@@ -1,3 +1,4 @@
+import 'package:fluttanim/core/services/mal.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fluttanim/constants/colors.dart';
@@ -11,143 +12,152 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        backgroundColor: const Color(kPrimaryColors),
-        appBar: AppBar(
-          title: const Text(
-            'Fluttanim',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          toolbarHeight: 72,
-        ),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                const TextField(
-                  style: TextStyle(color: Color(kGrayColors)),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(0),
-                    prefixIconConstraints: BoxConstraints(
-                      minWidth: 56,
-                      minHeight: 56,
-                    ),
-                    hintText: 'Search...',
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Color(kGrayColors),
-                    ),
-                    hintStyle: TextStyle(color: Color(kGrayColors)),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(kGrayColors40)),
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                    ),
-                  ),
+    return FutureBuilder(
+        future: MalServices.getList(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.data == null) {
+            return const Scaffold(
+                backgroundColor: Color(kPrimaryColors),
+                body: Center(child: CircularProgressIndicator()));
+          }
+          return GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+              backgroundColor: const Color(kPrimaryColors),
+              appBar: AppBar(
+                title: const Text(
+                  'Fluttanim',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
                 ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Categories',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(14, 14),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                toolbarHeight: 72,
+              ),
+              body: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      const TextField(
+                        style: TextStyle(color: Color(kGrayColors)),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(0),
+                          prefixIconConstraints: BoxConstraints(
+                            minWidth: 56,
+                            minHeight: 56,
+                          ),
+                          hintText: 'Search...',
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Color(kGrayColors),
+                          ),
+                          hintStyle: TextStyle(color: Color(kGrayColors)),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(kGrayColors40)),
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                          ),
                         ),
-                        onPressed: () {},
-                        child: const Text(
-                          'See More',
-                          style: TextStyle(color: Color(kGrayColors)),
-                        )),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: 96,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: mockData.length,
-                    itemBuilder: (context, idx) => Padding(
-                      padding: idx == 0 || idx == mockData.length - 1
-                          ? EdgeInsets.only(
-                              left: (idx == 0 ? 0 : 4),
-                              right: (idx == mockData.length - 1 ? 0 : 4))
-                          : const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: CategoryCard(
-                        icon: mockData[idx]['icon'],
-                        id: mockData[idx]['id'],
-                        title: mockData[idx]['title'],
                       ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Popular',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(14, 14),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Categories',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(14, 14),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () {},
+                              child: const Text(
+                                'See More',
+                                style: TextStyle(color: Color(kGrayColors)),
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 96,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: mockData.length,
+                          itemBuilder: (context, idx) => Padding(
+                            padding: idx == 0 || idx == mockData.length - 1
+                                ? EdgeInsets.only(
+                                    left: (idx == 0 ? 0 : 4),
+                                    right: (idx == mockData.length - 1 ? 0 : 4))
+                                : const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: CategoryCard(
+                              icon: mockData[idx]['icon'],
+                              id: mockData[idx]['id'],
+                              title: mockData[idx]['title'],
+                            ),
+                          ),
                         ),
-                        onPressed: () {},
-                        child: const Text(
-                          'See More',
-                          style: TextStyle(color: Color(kGrayColors)),
-                        )),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: Wrap(
-                    spacing: deviceWidth / 24,
-                    runSpacing: deviceWidth / 24,
-                    children: mockDataPopular
-                        .map((e) => PopularCard(
-                              id: e['id'],
-                              imageUrl: e['image_url'],
-                              rating: e['rating'],
-                              title: e['title'],
-                            ))
-                        .toList(),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Popular',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(14, 14),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () {},
+                              child: const Text(
+                                'See More',
+                                style: TextStyle(color: Color(kGrayColors)),
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          spacing: deviceWidth / 24,
+                          runSpacing: deviceWidth / 24,
+                          children: snapshot.data
+                              .map<Widget>((e) => PopularCard(
+                                    id: e.id,
+                                    imageUrl: e.imageUrl,
+                                    rating: e.rating,
+                                    title: e.title,
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -229,12 +239,31 @@ class PopularCard extends StatelessWidget {
             title,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
               color: Colors.white,
             ),
           ),
-          Row(children: ratingStars(rating))
+          Row(children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 1.0),
+              child: Text(
+                rating.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            const Icon(
+              Icons.star_rounded,
+              color: Colors.orange,
+              size: 16,
+            )
+          ])
         ],
       ),
     );
