@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:fluttanim/models/anime_detail/anime_detail_model.dart';
 import 'package:fluttanim/models/anime_list/anime_list_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 abstract class MalServices {
-  static Future<List<AnimeListModel>?> getList() async {
-    String accessToken = dotenv.get('ACCESS_TOKEN');
-    String baseUrl = dotenv.get('BASE_URL');
-    Dio dio = Dio();
+  static String accessToken = dotenv.get('ACCESS_TOKEN');
+  static String baseUrl = dotenv.get('BASE_URL');
+  static Dio dio = Dio();
 
+  static Future<List<AnimeListModel>?> getList() async {
     dio.options.headers['Authorization'] = 'Bearer $accessToken';
     try {
       var res = await dio
@@ -27,14 +28,36 @@ abstract class MalServices {
         }
 
         return animeList;
-        // return res.data['data'].map((e) => AnimeListModel(
-        //     title: e['node']['title'],
-        //     imageUrl: e['node']['main_picture']['medium'],
-        //     id: e['node']['id'],
-        //     rating: e['node']['mean']));
       }
 
       return [];
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  static Future<AnimeDetailModel?> getDetail(int id) async {
+    dio.options.headers['Authorization'] = 'Bearer $accessToken';
+
+    try {
+      var res = await dio.get(
+          '$baseUrl/anime/${id.toString()}?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics');
+
+      List<String> genres = [];
+
+      for (var i in res.data['genres']) {
+        genres.add(i['name']);
+      }
+
+      // List<String> genres = res.data['genres'].map((e) => e['name']);
+
+      return AnimeDetailModel(
+          title: res.data['title'],
+          studio: res.data['studios'][0]['name'],
+          rating: res.data['mean'],
+          genres: genres,
+          synopsis: res.data['synopsis'],
+          imageUrl: res.data['main_picture']['large']);
     } catch (e) {
       throw Exception(e.toString());
     }
